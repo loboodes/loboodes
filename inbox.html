@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تقارير الصحة المدرسية</title>
+
+  <!-- مكتبة التاريخ -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ar.js"></script>
+
+  <!-- مكتبة التحويل إلى PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+  <style>
+    @font-face {
+      font-family: 'HelveticaNeueW23';
+      src: url('fonts/HelveticaNeueW23-Regular.ttf') format('truetype');
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'HelveticaNeueW23', Arial, sans-serif;
+      background: #ffffff;
+    }
+
+    #mainContent {
+      padding: 12px;
+    }
+
+    header {
+      background: #0E7490; /* لون صحي هادئ */
+      color: white;
+      text-align: center;
+      padding: 10px;
+    }
+    header h3 {
+      margin: 3px 0;
+      font-size: 18px;
+    }
+    header h3 label {
+      font-weight: bold;
+      font-size: 20px;
+      text-align: center;
+      display: block;
+    }
+
+    label {
+      display: block;
+      margin: 5px 0 2px;
+      font-weight: bold;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 4px;
+      border: 1px solid #c2c1c2;
+      border-radius: 4px;
+      margin-bottom: 5px;
+      box-sizing: border-box;
+      font-size: 12px;
+      text-align: center;
+      background: transparent;
+      font-family: 'HelveticaNeueW23', Arial, sans-serif;
+    }
+
+    textarea {
+      min-height: 50px;
+    }
+
+    button {
+      border: none;
+      padding: 8px 12px;
+      margin: 8px 0;
+      cursor: pointer;
+      border-radius: 6px;
+      width: 100%;
+      font-size: 14px;
+      font-weight: bold;
+      font-family: 'HelveticaNeueW23', Arial, sans-serif;
+      text-align: center;
+    }
+    button.printBtn {
+      background: #0E7490;
+      color: white;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      text-align: right;
+      margin-bottom: 10px;
+    }
+
+    table td, table th {
+      border: 1px solid #999;
+      padding: 3px;
+      height: 22px;
+    }
+
+    table tr:nth-child(even) {
+      background: #f2f2f2;
+    }
+
+    /* عناوين الأقسام */
+    .section-title {
+      text-align: center;
+      margin: 8px 0;
+      background: #0E7490;
+      color: white;
+      padding: 4px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    /* معاينة الصور */
+    .preview-image-wrapper {
+      position: relative;
+      display: inline-block;
+      margin: 2px;
+    }
+
+    .preview-image-wrapper img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border: 1px solid #999;
+      border-radius: 4px;
+    }
+
+    .remove-img-btn {
+      position: absolute;
+      top: -6px;
+      left: -6px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: red;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      line-height: 18px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    /* الصور في الطباعة */
+    .print-image-wrapper {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 5px;
+    }
+    .print-image-wrapper img {
+      margin: 3px;
+      object-fit: cover;
+    }
+
+    /* هيدر الطباعة (الديباجة) */
+    .print-header {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .print-header img {
+      max-width: 160px; /* تحكّم بحجم صورة 26 */
+      height: auto;
+    }
+  </style>
+</head>
+
+<body>
+<div id="mainContent">
+  <header>
+    <h3><label>تقرير الصحة المدرسية</label></h3>
+  </header>
+
+  <div id="content1">
+    <!-- البيانات الأساسية -->
+    <div style="display:flex; gap:10px; justify-content:center; margin-bottom:10px;">
+      <div style="width:220px;">
+        <label>إدارة التعليم</label>
+        <input type="text">
+      </div>
+      <div style="width:220px;">
+        <label>اسم المدرسة</label>
+        <input type="text">
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:5px; margin-bottom:10px;">
+      <div>
+        <label>اسم المنفذة / الممرضة</label>
+        <input type="text">
+      </div>
+      <div>
+        <label>اسم البرنامج الصحي</label>
+        <input type="text">
+      </div>
+      <div>
+        <label>الفئة المستهدفة</label>
+        <input type="text">
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:5px; margin-bottom:10px;">
+      <div>
+        <label>مكان التنفيذ</label>
+        <input type="text">
+      </div>
+      <div>
+        <label>مدة التنفيذ</label>
+        <input type="text">
+      </div>
+      <div>
+        <label>تاريخ التنفيذ</label>
+        <input type="text" id="date1" placeholder="اختر التاريخ" readonly>
+      </div>
+    </div>
+
+    <!-- وصف البرنامج -->
+    <div style="margin-bottom:10px;">
+      <div class="section-title">وصف البرنامج الصحي</div>
+      <textarea placeholder="اكتبي وصفًا مختصرًا للبرنامج الصحي، أهدافه العامة، ومبررات تنفيذه."></textarea>
+    </div>
+
+    <!-- الأهداف -->
+    <div>
+      <div class="section-title">الأهداف الصحية للبرنامج</div>
+      <table>
+        <tr>
+          <td style="width:30px; text-align:center;">1</td>
+          <td><input type="text" style="width:100%; border:none;"></td>
+          <td style="width:30px; text-align:center;">2</td>
+          <td><input type="text" style="width:100%; border:none;"></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;">3</td>
+          <td><input type="text" style="width:100%; border:none;"></td>
+          <td style="text-align:center;">4</td>
+          <td><input type="text" style="width:100%; border:none;"></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- محاور وأنشطة البرنامج -->
+    <div>
+      <div class="section-title">محاور وأنشطة البرنامج الصحي</div>
+      <table>
+        <tr>
+          <th style="width:40px;">م</th>
+          <th>المحور / النشاط</th>
+          <th style="width:120px;">أسلوب التنفيذ</th>
+        </tr>
+        <tr>
+          <td style="text-align:center;">1</td>
+          <td><input type="text" style="width:100%; border:none;"></td>
+          <td><input type="text" style="width:100%; border:none;"></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;">2</td>
+          <td><input type="text" style="width:100%; border:none;"></td>
+          <td><input type="text" style="width:100%; border:none;"></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;">3</td>
+          <td><input type="text" style="width:100%; border:none;"></td>
+          <td><input type="text" style="width:100%; border:none;"></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- وسائل التوعية -->
+    <div>
+      <div class="section-title">وسائل التوعية والتثقيف الصحي</div>
+      <table>
+        <tr>
+          <td style="width:30px; text-align:center;">1</td>
+          <td><input type="text" style="width:100%; border:none;" placeholder="مثال: عروض مرئية، نشرات توعوية"></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;">2</td>
+          <td><input type="text" style="width:100%; border:none;"></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;">3</td>
+          <td><input type="text" style="width:100%; border:none;"></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- المشاركون -->
+    <div>
+      <div class="section-title">المشاركون في التنفيذ</div>
+      <table>
+        <tr>
+          <th style="width:40px;">م</th>
+          <th>اسم المشارك</th>
+          <th style="width:140px;">الجهة / الصفة</th>
+        </tr>
+        <tr>
+          <td style="text-align:center;">1</td>
+          <td><input type="text" style="width:100%; border:none;"></td>
+          <td><input type="text" style="width:100%; border:none;"></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;">2</td>
+          <td><input type="text" style="width:100%; border:none;"></td>
+          <td><input type="text" style="width:100%; border:none;"></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;">3</td>
+          <td><input type="text" style="width:100%; border:none;"></td>
+          <td><input type="text" style="width:100%; border:none;"></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- النتائج -->
+    <div>
+      <div class="section-title">نتائج البرنامج الصحي</div>
+      <table>
+        <tr>
+          <td style="width:30px; text-align:center;">1</td>
+          <td><input type="text" style="width:100%; border:none;"></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;">2</td>
+          <td><input type="text" style="width:100%; border:none;"></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- التوصيات -->
+    <div>
+      <div class="section-title">التوصيات</div>
+      <table>
+        <tr>
+          <td style="width:30px; text-align:center;">1</td>
+          <td><input type="text" style="width:100%; border:none;"></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;">2</td>
+          <td><input type="text" style="width:100%; border:none;"></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- الشواهد والأدلة (صور) -->
+    <div style="margin-top:10px;">
+      <label>الشواهد والأدلة (صور من البرنامج الصحي)</label>
+      <input type="file" multiple accept="image/*" onchange="storeImages(event)" />
+      <div id="enrichment-counter" style="font-size:12px; color:#0E7490; font-weight:bold;">
+        عدد الصور المرفوعة: 0 / 4
+      </div>
+      <div id="enrichment-preview"></div>
+    </div>
+
+    <!-- التواقيع -->
+    <div style="display:flex; justify-content:center; gap:40px; margin-top:12px;" id="directorField">
+      <div style="width:220px;">
+        <label>مسؤولة الصحة المدرسية</label>
+        <input type="text" id="healthResponsible">
+      </div>
+      <div style="width:220px;">
+        <label>مديرة المدرسة</label>
+        <input type="text" id="principalName">
+      </div>
+    </div>
+
+    <!-- زر طباعة التقرير -->
+    <button class="printBtn" onclick="printPDF()">طباعة التقرير</button>
+  </div>
+</div>
+
+<script>
+  let uploadedImages = [];
+
+  // التاريخ
+  flatpickr('#date1', {
+    locale: 'ar',
+    dateFormat: 'd-m-Y',
+    altInput: true,
+    altFormat: 'd-m-Y'
+  });
+
+  // تخزين الصور ومعاينتها
+  function storeImages(event){
+    let files = Array.from(event.target.files);
+    if(files.length + uploadedImages.length > 4){
+      alert('يمكن رفع 4 صور فقط.');
+      files = files.slice(0, 4 - uploadedImages.length);
+    }
+
+    files.forEach(file => uploadedImages.push(file));
+
+    const preview = document.getElementById('enrichment-preview');
+    preview.innerHTML = '';
+    uploadedImages.forEach((file, index) => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'preview-image-wrapper';
+
+      const img = document.createElement('img');
+      const reader = new FileReader();
+      reader.onload = e => { img.src = e.target.result; };
+      reader.readAsDataURL(file);
+
+      const removeBtn = document.createElement('div');
+      removeBtn.className = 'remove-img-btn';
+      removeBtn.innerText = '×';
+      removeBtn.onclick = () => {
+        uploadedImages.splice(index, 1);
+        storeImages({target:{files:[]}}); // إعادة بناء المعاينة
+      };
+
+      wrapper.appendChild(img);
+      wrapper.appendChild(removeBtn);
+      preview.appendChild(wrapper);
+    });
+
+    document.getElementById('enrichment-counter').innerText =
+      `عدد الصور المرفوعة: ${uploadedImages.length} / 4`;
+  }
+
+  // طباعة / تحميل PDF مع الديباجة (صورة 26)
+  function printPDF(){
+    const btn = document.querySelector('.printBtn');
+    btn.style.display = 'none';
+
+    // ننسخ محتوى النموذج
+    const element = document.getElementById('content1').cloneNode(true);
+
+    // نحذف الأزرار ومدخلات الصور وأزرار الحذف من النسخة
+    element.querySelectorAll(
+      'button,input[type="file"],#enrichment-counter,#enrichment-preview .remove-img-btn'
+    ).forEach(el => el.remove());
+
+    // تجهيز الصور للطباعة إن وجدت
+    let imageContainer = document.createElement('div');
+    imageContainer.className = 'print-image-wrapper';
+    imageContainer.style.marginBottom = '10px';
+
+    // الصور الموجودة في المعاينة الأصلية
+    const originalPreview = document.getElementById('enrichment-preview');
+    const allImages = originalPreview.querySelectorAll('img');
+
+    allImages.forEach(imgOrig => {
+      const img = document.createElement('img');
+      img.src = imgOrig.src;
+      img.style.width = '150px';
+      img.style.height = '130px';
+      img.style.objectFit = 'cover';
+      imageContainer.appendChild(img);
+    });
+
+    const directorField = element.querySelector('#directorField');
+    if(directorField && allImages.length > 0){
+      element.insertBefore(imageContainer, directorField);
+    }
+
+    // الغلاف A4 مع الخلفية
+    const wrapper = document.createElement('div');
+    wrapper.style.position = 'relative';
+    wrapper.style.width = '210mm';
+    wrapper.style.height = '296.5mm';
+    wrapper.style.padding = '22mm 10mm 20mm 10mm';
+    wrapper.style.boxSizing = 'border-box';
+    wrapper.style.backgroundImage = 'url("images/background.png")';
+    wrapper.style.backgroundSize = 'cover';
+    wrapper.style.backgroundRepeat = 'no-repeat';
+    wrapper.style.backgroundPosition = 'center';
+
+    // ✅ الديباجة (صورة 26) في الأعلى
+    const header = document.createElement('div');
+    header.className = 'print-header';
+    header.innerHTML = `
+      <img src="26.png" alt="شعار المدرسة السادسة والعشرون">
+    `;
+    wrapper.appendChild(header);
+
+    // ثم محتوى التقرير
+    wrapper.appendChild(element);
+
+    html2pdf().set({
+      margin: 0,
+      filename: 'تقرير-الصحة-المدرسية.pdf',
+      image: { type:'jpeg', quality:0.98 },
+      html2canvas: { scale: 2, backgroundColor: null, useCORS: true },
+      jsPDF: { unit:'mm', format:'a4', orientation:'portrait' }
+    }).from(wrapper).save().then(() => {
+      btn.style.display = 'block';
+    });
+  }
+</script>
+
+</body>
+</html>
